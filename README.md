@@ -637,11 +637,11 @@ Request recurrent transfer
 
 [60]: #parameters-27
 
-[61]: http://u.cubeupload.com/arcange/yOdI5g.png
+[61]: https://github.com/MrFasolo97/avalon-keychain/blob/master/images/keychain_logo.png?raw=true
 
-[62]: https://chrome.google.com/webstore/detail/hive-keychain/jcacnejopjdphbnjgfaaobbfafkihpep
+[62]: 
 
-[63]: https://addons.mozilla.org/en-GB/firefox/addon/hive-keychain/
+[63]: 
 
 [64]: http://localhost:1337/main.html
 
