@@ -1,7 +1,7 @@
 let tokens = [];
 let accountTokenBalances = [];
 const urlSSC = ["https://api.hive-engine.com/rpc"];
-const ssc = new SSC(urlSSC[0]);
+//const ssc = new SSC(urlSSC[0]);
 let hidden_tokens = [];
 const hiveEngine = "https://accounts.hive-engine.com/accountHistory?account=";
 const CHAIN_ID = config.mainNet;
@@ -11,6 +11,7 @@ chrome.storage.local.get(["hidden_tokens"], function (items) {
     hidden_tokens = JSON.parse(items.hidden_tokens || []);
 });
 
+/*
 getTokens().then(function (tok) {
   tokens = tok;
   for (token of tokens) {
@@ -63,6 +64,7 @@ getTokens().then(function (tok) {
       });
     });
 });
+*/
 
 function showTokenBalances() {
   getAccountBalances(activeAccount.getName()).then((tokenBalances) => {

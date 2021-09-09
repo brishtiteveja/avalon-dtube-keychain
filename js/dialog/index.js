@@ -181,8 +181,7 @@ chrome.runtime.onMessage.addListener(function (
       signTx: chrome.i18n.getMessage("dialog_title_sign_tx"),
       addAccount: chrome.i18n.getMessage("popup_html_add_account"),
       convert: collaterized
-        ? chrome.i18n.getMessage("dialog_title_convert_hive")
-        : chrome.i18n.getMessage("dialog_title_convert_hbd"),
+        ? chrome.i18n.getMessage("dialog_title_convert_dtc"),
       recurrentTransfer: chrome.i18n.getMessage(
         "dialog_title_recurrent_transfer"
       ),
@@ -467,14 +466,6 @@ chrome.runtime.onMessage.addListener(function (
         $("#memo").text(memo);
         if (memo.length > 0) $(".transfer_memo").show();
         break;
-      case "powerUp":
-        $("#to").text(`@${recipient}`);
-        $("#amount").text(`${steem} HIVE`);
-        break;
-      case "powerDown":
-        showBalances(username, "HP", steem_power);
-        $("#amount").text(`${steem_power} HP`);
-        break;
       case "createProposal":
         $("#receiver").text(receiver);
         $("#extensions").text(extensions);
@@ -607,34 +598,22 @@ chrome.runtime.onMessage.addListener(function (
 
 const showBalances = async (user, currency, amount) => {
   let balance = 0;
-  hive.api.setOptions({ url: "https://api.hive.blog/" });
-  if (["hbd", "hive", "hp"].includes(currency.toLowerCase())) {
-    const account = (await hive.api.getAccountsAsync([user]))[0];
-    switch (currency.toLowerCase()) {
-      case "hive":
-        balance = parseFloat(account.balance.split(" ")[0]);
-        break;
-      case "hbd":
-        balance = account.sbd_balance
-          ? parseFloat(account.sbd_balance.split(" ")[0])
-          : parseFloat(account.hbd_balance.split(" ")[0]);
-        break;
-      case "hp":
-        balance = await getHivePower(account.vesting_shares);
-        break;
+  let accountsList = new AccountsList();
+  const activeAccount = await accountsList.get(user);
+  if(["dtc", "vp"].includes(currency.toLowerCase())) {
+    if(currency == "dtc") {
+      balance = activeAccount.getDTC();
+    } else if (currency == "vp") {
+      balance = activeAccount.getVP();
     }
-  } else {
-    const tokens = await getTokens(user);
-    const token = tokens.find((e) => e.symbol === currency);
-    balance = token ? parseFloat(token.balance) : 0;
+    $("#balance").text(`${balance}  ${currency}`).show();
+    const balance_after = (balance - amount).toFixed(3);
+    $("#balance_after")
+      .text(`${balance_after}  ${currency}`)
+      .show()
+      .css("color", balance_after > 0 ? "white" : "red");
+    $(".balance_loading").hide();
   }
-  $("#balance").text(`${balance}  ${currency}`).show();
-  const balance_after = (balance - amount).toFixed(3);
-  $("#balance_after")
-    .text(`${balance_after}  ${currency}`)
-    .show()
-    .css("color", balance_after > 0 ? "white" : "red");
-  $(".balance_loading").hide();
 };
 
 const getHivePower = async (vesting_shares) => {
@@ -649,8 +628,9 @@ const getHivePower = async (vesting_shares) => {
 };
 
 const getTokens = async (account) => {
-  const ssc = new SSC("https://api.hive-engine.com/rpc");
-  return await ssc.find("tokens", "balances", { account });
+  //const ssc = new SSC("https://api.hive-engine.com/rpc");
+  //return await ssc.find("tokens", "balances", { account });
+  return -1;
 };
 
 function initiateCustomSelect(data) {

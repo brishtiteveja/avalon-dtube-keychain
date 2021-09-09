@@ -1,12 +1,24 @@
 class Account {
   constructor(obj) {
     this.account = obj || {};
+    this.info = {};
   }
   init() {
-    this.info = hive.api.getAccountsAsync([this.account.name]);
+    this.updateUserData();
     this.props = new GlobalProps();
-    this.delegatees = getDelegatees(this.account.name);
-    this.delegators = getDelegators(this.account.name);
+  }
+  saveAccountInfo(err, info) {
+    if(err == null) {
+      this.info = info;
+    } else {
+      console.error(err);
+    }
+  }
+  updateUserData() {
+    javalon.getAccount(this.account.name, (err, res) => {
+      this.info = res;
+      this.saveAccountInfo(err, res);
+    });
   }
   getObj() {
     return this.account;
@@ -31,11 +43,17 @@ class Account {
     delete this.account.keys[`${key}Pubkey`];
   }
   async getAccountInfos() {
-    return (await this.info)[0];
+    return this.info;
+  }
+  async getLeaderVotes() {
+    if(typeof this.info.approves == 'undefined') {
+      await this.updateUserData();
+    }
+    return this.info.approves;
   }
   async getAccountInfo(key) {
-    const info = (await this.info)[0];
-    return info[key];
+    const value = await this.info[key];
+    return value;
   }
   async getAvailableRewards() {
     this.hf24 = (await this.getAccountInfo("reward_sbd_balance")) === undefined;
@@ -107,16 +125,15 @@ class Account {
     return [vm, full];
   }
 
-  async getHive() {
-    return (await this.getAccountInfo("balance"))
-      .replace(" HIVE", "")
-      .replace(" TESTS", "");
+  async getDTC() {
+    return await this.getAccountInfo("balance")/100;
   }
 
-  async getHiveSavings() {
-    return (await this.getAccountInfo("savings_balance"))
-      .replace(" HIVE", "")
-      .replace(" TESTS", "");
+  async getVP() {
+    await javalon.getAccount(this.account.name, (err, result) => {
+      this.vp = result.vt.v;
+    });
+    return this.vp;
   }
 
   async getHBDSavings() {
@@ -130,9 +147,7 @@ class Account {
         .replace(" HBD", "")
         .replace(" TBD", "");
     else
-      return (await this.getAccountInfo("hbd_balance"))
-        .replace(" HBD", "")
-        .replace(" TBD", "");
+      return (await this.getVP());
   }
 
   async getHP() {
@@ -177,20 +192,11 @@ class Account {
   }
 
   async getAccountValue() {
-    const [hive, hbd] = await this.props.getPrices();
-
+    var prices = await this.props.getPrices();
     return (
-      numberWithCommas(
+      (
         "$ " +
-          (
-            hbd *
-              (parseFloat(await this.getHBD()) +
-                parseFloat(await this.getHBDSavings())) +
-            hive *
-              (parseFloat(await this.getHP()) +
-                parseFloat(await this.getHiveSavings()) +
-                parseFloat(await this.getHive()))
-          ).toFixed(2)
+          ( parseFloat(prices["USD"]) * parseFloat(await this.getDTC())).toFixed(2)
       ) + "\t  USD"
     );
   }

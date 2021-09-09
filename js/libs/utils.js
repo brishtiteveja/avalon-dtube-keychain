@@ -12,33 +12,35 @@ var getVotingMana = function (account) {
 
 // get all information regarding VM
 var getVotingManaData = function (account) {
-  const estimated_max =
+  /*const estimated_max =
     (getEffectiveVestingSharesPerAccount(account) -
       parseFloat(account.vesting_withdraw_rate)) *
     1000000;
-  const current_mana = parseFloat(account.voting_manabar.current_mana);
-  const last_update_time = account.voting_manabar.last_update_time;
-  const diff_in_seconds = Math.round(Date.now() / 1000 - last_update_time);
-  let estimated_mana =
+    */
+  //const current_mana = parseFloat(account.voting_manabar.current_mana);
+  //const last_update_time = account.voting_manabar.last_update_time;
+  //const diff_in_seconds = Math.round(Date.now() / 1000 - last_update_time);
+  /*let estimated_mana =
     current_mana +
     (diff_in_seconds * estimated_max) / STEEM_VOTING_MANA_REGENERATION_SECONDS;
   if (estimated_mana > estimated_max) estimated_mana = estimated_max;
-  const estimated_pct = (estimated_mana / estimated_max) * 100;
+  const estimated_pct = (estimated_mana / estimated_max) * 100;*/
   return {
-    current_mana: current_mana,
-    last_update_time: last_update_time,
-    estimated_mana: estimated_mana,
-    estimated_max: estimated_max,
-    estimated_pct: isNaN(estimated_pct) ? 100 : estimated_pct,
+    current_mana: -1,
+    last_update_time: -1,
+    estimated_mana: -1,
+    estimated_max: -1,
+    estimated_pct: -1,
   };
 };
 
 // get SP + received delegations - delegations sent
 var getEffectiveVestingSharesPerAccount = function (account) {
-  var effective_vesting_shares =
+  /*var effective_vesting_shares =
     parseFloat(account.vesting_shares.replace(" VESTS", "")) +
     parseFloat(account.received_vesting_shares.replace(" VESTS", "")) -
-    parseFloat(account.delegated_vesting_shares.replace(" VESTS", ""));
+    parseFloat(account.delegated_vesting_shares.replace(" VESTS", ""));*/
+  effective_vesting_shares = -1;
   return effective_vesting_shares;
 };
 
@@ -245,7 +247,7 @@ function getPricesAsync() {
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.setRequestHeader("X-Parse-Application-Id", chrome.runtime.id);
       },
-      url: "https://api.hive-keychain.com/hive/bittrex",
+      url: "https://dtube.fso.ovh/dtube.php",
       success: function (response) {
         resolve(response);
       },
@@ -265,7 +267,7 @@ function getWitnessRanks() {
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.setRequestHeader("X-Parse-Application-Id", chrome.runtime.id);
       },
-      url: "https://api.hive-keychain.com/hive/witnesses-ranks",
+      url: "https://dtube.fso.ovh/rank/leaders",
       success: function (response) {
         resolve(response);
       },
@@ -341,7 +343,6 @@ function initiateCustomSelect(options, current_rpc) {
       b.appendChild(c);
     }
     x[i].appendChild(b);
-
     if (i === 0) {
       loadAccount(a.innerHTML, options);
     }
@@ -376,8 +377,8 @@ function initiateCustomSelect(options, current_rpc) {
           last_account: this.innerHTML,
         });
         loadAccount(this.innerHTML, options);
-      } else if (this.innerHTML === "HBD") {
-        const balance = await activeAccount.getHBD();
+      } else if (this.innerHTML === "DTC") {
+        const balance = activeAccount.getDTC();
         $(".transfer_balance div")
           .eq(0)
           .text(chrome.i18n.getMessage("popup_html_balance", ["HBD"]));
@@ -388,8 +389,8 @@ function initiateCustomSelect(options, current_rpc) {
             $("#amt_send").val(balance);
           });
         $("#amt_send").val(null);
-      } else if (this.innerHTML === "HIVE") {
-        const balance = await activeAccount.getHive();
+      } else if (this.innerHTML === "VP") {
+        const balance = activeAccount.getVP();
         $(".transfer_balance div")
           .eq(0)
           .text(chrome.i18n.getMessage("popup_html_balance", ["HIVE"]));

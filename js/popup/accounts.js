@@ -35,10 +35,9 @@ function getPubkeyWeight(
 // Load account information
 const loadAccount = async (name, options) => {
   console.log(`Load account ${name}`);
+  var activeAccount = await accountsList.get(name);
+  await activeAccount.init();
   if (options) await options;
-  activeAccount = accountsList.get(name);
-  console.log(activeAccount);
-  activeAccount.init();
   $("#recipient").autocomplete({
     source: to_autocomplete[activeAccount.getName()],
     minLength: 2,
@@ -46,52 +45,54 @@ const loadAccount = async (name, options) => {
   });
   $("#send_form").toggle(activeAccount.hasKey("active"));
   $("#show_add_active").toggle(!activeAccount.hasKey("active"));
-  $(".wallet_infos .main_currency").html("...");
+  $(".main_currency#dtc_balance").html("...");
+  $(".main_currency#vp_balance").html("...");
   $("#vm_pct").html("...");
   $("#vm_val").html("");
   $("#rc").html("...");
-  const [vm, full] = await activeAccount.getVotingMana();
-  $("#vm_pct").html(vm + "%");
-  $("#vm_info").attr("title", full);
+  //const [vm, full] = await activeAccount.getVotingMana();
+  //$("#vm_pct").html(vm + "%");
+  //$("#vm_info").attr("title", full);
+  //const proxy = await activeAccount.getAccountInfo("proxy");
 
-  const witness_votes = await activeAccount.getAccountInfo("witness_votes");
-  const proxy = await activeAccount.getAccountInfo("proxy");
-
-  showUserData();
-  claimRewards();
-  prepareWitnessDiv(witness_votes, proxy);
-  prepareDelegationTab();
-  preparePowerUpDown();
-  showTokenBalances();
-  proposeVotes(name, witness_votes, proxy);
-  // proposeWitnessVote(witness_votes, proxy);
+  await showUserData(activeAccount);
+  var witness_votes = activeAccount.info.approves;
+  console.log("witness_votes: "+JSON.stringify(witness_votes));
+  //claimRewards();
+  prepareWitnessDiv(activeAccount);
+  //prepareDelegationTab();
+  //preparePowerUpDown();
+  //showTokenBalances();
+  proposeVotes(name, witness_votes);
+  proposeWitnessVote(witness_votes);
   // checkProposalVote(name);
   getAccountHistory();
 };
 
 // Display all the account data
-const showUserData = async () => {
+const showUserData = async (activeAccount) => {
   console.log("show bal");
-  showBalances();
   const balance =
-    $("#currency_send .select-selected").text() === "HIVE"
-      ? await activeAccount.getHive()
-      : await activeAccount.getHBD();
-  $(".transfer_balance div").eq(1).html(numberWithCommas(balance));
+    $("#currency_send .select-selected").text() === "DTC"
+      ? (await (activeAccount.getDTC()))
+      : (await (activeAccount.getVP()));
+  $(".transfer_balance div").eq(1).html(balance);
   $("#amt_send_max")
     .unbind("click")
     .click(() => {
       $("#amt_send").val(balance);
     });
-  const [vd, rc] = [
-    await activeAccount.getVotingDollars(100),
-    await activeAccount.getRC(),
-  ];
-  $("#vm_val").text(" ($" + vd + ")");
+  //const [vd, rc] = [
+    //await activeAccount.getVotingDollars(100),
+    //await activeAccount.getRC(),
+  //];
+  //$("#vm_val").text(" ($" + vd + ")");
 
-  $("#rc").html(rc.estimated_pct + "%");
-  const full = rc.fullin;
-  $("#rc_info").attr("title", full);
+  //$("#rc").html(rc.estimated_pct + "%");
+  //const full = rc.fullin;
+  //$("#rc_info").attr("title", full);
+  $(".main_currency#dtc_balance").html("...");
+  $(".main_currency#vp_balance").html("...");
   const accountValue = await activeAccount.getAccountValue();
   if (accountValue) {
     $("#account_value_amt").html(accountValue);
@@ -100,10 +101,12 @@ const showUserData = async () => {
       chrome.i18n.getMessage("popup_accounts_no_bittrex")
     );
   }
+  showBalances(activeAccount);
 };
 
 const getAccountHistory = async () => {
-  const transfers = await activeAccount.getTransfers();
+  //const transfers = await activeAccount.getTransfers();
+  const transfers = [];
   $("#acc_transfers div").eq(1).empty();
   if (transfers.length != 0) {
     for (transfer of transfers) {
@@ -198,72 +201,44 @@ $("#check_add_account").click(function () {
         chrome.i18n.getMessage("popup_accounts_already_registered", [username])
       );
     } else
-      hive.api.getAccounts([username], function (err, result) {
+      var result = javalon.getAccount(username, function (result, err) {
         if (result.length != 0) {
-          const active_info = result["0"].active;
-          const posting_info = result["0"].posting;
-          const pub_memo = result["0"].memo_key;
-          if (hive.auth.isWif(pwd)) {
-            const pub_unknown = hive.auth.wifToPublic(pwd);
-            if (pub_unknown == pub_memo) {
-              addAccount({
-                name: username,
-                keys: {
-                  memo: pwd,
-                  memoPubkey: pub_memo,
-                },
-              });
-            } else if (getPubkeyWeight(pub_unknown, posting_info)) {
-              addAccount({
-                name: username,
-                keys: {
-                  posting: pwd,
-                  postingPubkey: pub_unknown,
-                },
-              });
-            } else if (getPubkeyWeight(pub_unknown, active_info)) {
+          console.log(javalon.privToPub(pwd));
+          if (javalon.privToPub(pwd)) {
+            const pub_unknown = javalon.privToPub(pwd);
               addAccount({
                 name: username,
                 keys: {
                   active: pwd,
                   activePubkey: pub_unknown,
                 },
-              });
-            }
+              }
+            )
           } else {
-            const keys = hive.auth.getPrivateKeys(username, pwd, [
-              "posting",
-              "active",
-              "memo",
-            ]);
-            const has_active =
-              getPubkeyWeight(keys.activePubkey, active_info) != 0;
-            const has_posting =
-              getPubkeyWeight(keys.postingPubkey, posting_info) != 0;
-            if (
-              has_active > 0 ||
-              has_posting > 0 ||
-              keys.memoPubkey == pub_memo
-            ) {
-              $("#posting_key").prop("checked", has_posting);
-              $("#posting_key").prop("disabled", !has_posting);
-              $("#active_key").prop("checked", has_active);
-              $("#active_key").prop("disabled", !has_active);
-              $("#memo_key").prop("checked", keys.memoPubkey == pub_memo);
-              $("#memo_key").prop("disabled", keys.memoPubkey != pub_memo);
-              $("#add_account_div").hide();
-              $("#master_check").show();
-            } else {
-              showError(INCORRECT_KEY);
-            }
-          }
+            showError(INCORRECT_USER);
+          };
         } else {
-          showError(INCORRECT_USER);
-        }
-      });
-  } else {
+          const key = pwd;
+          if (
+            has_active > 0 ||
+            has_posting > 0 ||
+            keys.memoPubkey == pub_memo
+          ) {
+            $("#posting_key").prop("checked", has_posting);
+            $("#posting_key").prop("disabled", !has_posting);
+            $("#active_key").prop("checked", has_active);
+            $("#active_key").prop("disabled", !has_active);
+            $("#memo_key").prop("checked", keys.memoPubkey == pub_memo);
+            $("#memo_key").prop("disabled", keys.memoPubkey != pub_memo);
+            $("#add_account_div").hide();
+            $("#master_check").show();
+          } else {
+            showError(INCORRECT_KEY);
+          }
+       }
+    });
+  } else
     showError(FILL);
-  }
 });
 
 // If master key was entered, handle which keys to save.
@@ -434,88 +409,42 @@ const manageKeys = (name) => {
       const keys = accountsList.getById(index).getKeys();
       const pwd = $("#new_key").val();
 
-      hive.api.getAccounts([name], function (err, result) {
+      var result = javalon.getAccount(username, function (result, err) {
         if (result.length != 0) {
-          const active_info = result["0"].active;
-          const posting_info = result["0"].posting;
-          const pub_memo = result["0"].memo_key;
-          if (hive.auth.isWif(pwd)) {
-            const pub_unknown = hive.auth.wifToPublic(pwd);
-            if (adding_key == "memo" && pub_unknown == pub_memo) {
-              if (keys.hasOwnProperty("memo"))
-                showError(
-                  chrome.i18n.getMessage("popup_accounts_already_have_key", [
-                    chrome.i18n.getMessage("memo"),
-                  ])
-                );
-              else addKeys(index, "memo", pwd, pub_memo, name);
-            } else if (
-              adding_key == "posting" &&
-              getPubkeyWeight(pub_unknown, posting_info)
-            ) {
-              if (keys.hasOwnProperty("posting"))
-                showError(
-                  chrome.i18n.getMessage("popup_accounts_already_have_key", [
-                    chrome.i18n.getMessage("posting"),
-                  ])
-                );
-              else addKeys(index, "posting", pwd, pub_unknown, name);
-            } else if (
-              adding_key == "active" &&
-              getPubkeyWeight(pub_unknown, active_info)
-            ) {
-              if (keys.hasOwnProperty("active"))
-                showError(
-                  chrome.i18n.getMessage("popup_accounts_already_have_key", [
-                    chrome.i18n.getMessage("active"),
-                  ])
-                );
-              else addKeys(index, "active", pwd, pub_unknown, name);
-            } else {
-              console.log(adding_key);
-              console.log(
-                adding_key,
-                chrome.i18n.getMessage(adding_key),
-                chrome.i18n.getMessage("popup_accounts_not_your_key", [
-                  chrome.i18n.getMessage(adding_key),
-                ])
-              );
-              showError(
-                chrome.i18n.getMessage("popup_accounts_not_your_key", [
-                  chrome.i18n.getMessage(adding_key),
-                ])
-              );
-            }
+          console.log(javalon.privToPub(pwd));
+          if (javalon.privToPub(pwd)) {
+            const pub_unknown = javalon.privToPub(pwd);
+              addAccount({
+                name: username,
+                keys: {
+                  active: pwd,
+                  activePubkey: pub_unknown,
+                },
+              }
+            )
           } else {
-            const keys = hive.auth.getPrivateKeys(name, pwd, [
-              "posting",
-              "active",
-              "memo",
-            ]);
-            console.log(keys);
-            switch (adding_key) {
-              case "memo":
-                pub = pub_memo;
-                weight = keys.memoPubkey == pub_memo ? 1 : 0;
-                break;
-              case "active":
-                pub = keys.activePubkey;
-                weight = getPubkeyWeight(keys.activePubkey, active_info);
-                break;
-              case "posting":
-                pub = keys.postingPubkey;
-                weight = getPubkeyWeight(keys.postingPubkey, posting_info);
-                break;
-            }
-            if (weight) addKeys(index, adding_key, keys[adding_key], pub, name);
-            else {
-              showError(chrome.i18n.getMessage("popup_accounts_not_wif"));
-            }
-          } // else
+            showError(INCORRECT_USER);
+          };
         } else {
-          showError(chrome.i18n.getMessage("popup_accounts_try_again"));
-        } // if/else
-      }); // getAccounts
+          const key = pwd;
+          if (
+            has_active > 0 ||
+            has_posting > 0 ||
+            keys.memoPubkey == pub_memo
+          ) {
+            $("#posting_key").prop("checked", has_posting);
+            $("#posting_key").prop("disabled", !has_posting);
+            $("#active_key").prop("checked", has_active);
+            $("#active_key").prop("disabled", !has_active);
+            $("#memo_key").prop("checked", keys.memoPubkey == pub_memo);
+            $("#memo_key").prop("disabled", keys.memoPubkey != pub_memo);
+            $("#add_account_div").hide();
+            $("#master_check").show();
+          } else {
+            showError(INCORRECT_KEY);
+          }
+       }
+      });
     }); // .click
 }; // manageKeys
 
@@ -532,60 +461,11 @@ const addKeys = (i, key, priv, pub, name) => {
 };
 
 // show balance for this account
-const showBalances = async () => {
-  $("#wallet_amt .wallet_infos")
-    .eq(0)
-    .find("div")
-    .eq(0)
-    .html(numberWithCommas(await activeAccount.getHive()));
-
-  $("#wallet_amt .wallet_infos")
-    .eq(1)
-    .find("div")
-    .eq(0)
-    .html(numberWithCommas(await activeAccount.getHBD()));
-  $("#wallet_amt .wallet_infos")
-    .eq(2)
-    .find("div")
-    .eq(0)
-    .html(numberWithCommas(await activeAccount.getHP()));
-
-  if ((await activeAccount.getHiveSavings()) !== "0.000") {
-    $("#wallet_amt .wallet_infos")
-      .eq(0)
-      .find("div")
-      .eq(1)
-      .html(numberWithCommas(`+ ${await activeAccount.getHiveSavings()}`));
-    $("#wallet_amt .wallet_infos")
-      .eq(0)
-      .find("div")
-      .eq(1)
-      .prop(
-        "title",
-        `This amount is stored in savings and is subject to a 3 days withdraw period.`
-      );
-  } else {
-    $("#wallet_amt .wallet_infos").eq(0).find("div").eq(1).html("");
-  }
-  if ((await activeAccount.getHBDSavings()) !== "0.000") {
-    $("#wallet_amt .wallet_infos")
-      .eq(1)
-      .find("div")
-      .eq(1)
-      .html(numberWithCommas(`+ ${await activeAccount.getHBDSavings()}`));
-    $("#wallet_amt .wallet_infos")
-      .eq(1)
-      .find("div")
-      .eq(1)
-      .prop(
-        "title",
-        `This amount is stored in savings and is subject to a 3 days withdraw period. It will increase with a ${
-          (await activeAccount.props.getProp("hbd_interest_rate")) / 100
-        }% interest.`
-      );
-  } else {
-    $("#wallet_amt .wallet_infos").eq(1).find("div").eq(1).html("");
-  }
+const showBalances = async (activeAccount) => {
+  const dtc_balance = await (activeAccount.getDTC());
+  const vp_balance = await (activeAccount.getVP());
+  $(".main_currency#vp_balance").html(""+vp_balance);
+  $(".main_currency#dtc_balance").html(""+dtc_balance.toFixed(2));
   $("#balance_loader").hide();
 };
 
@@ -597,7 +477,7 @@ const deleteAccount = (i) => {
   initializeVisibility();
 };
 
-const claimRewards = async () => {
+const claimRewards = async () => { /*
   console.log(`Check claim rewards for ${activeAccount.getName()}`);
   const [reward_hbd, reward_hp, reward_hive, rewardText] =
     await activeAccount.getAvailableRewards();
@@ -629,47 +509,48 @@ const claimRewards = async () => {
           });
       });
   } else $("#claim").hide();
+  */
 };
 
-const proposeWitnessVote = (witness_votes, proxy) => {
+const proposeWitnessVote = async function(witness_votes) {
+  var witness_votes = (await witness_votes);
   if (
-    !proxy &&
-    (!witness_votes.includes("stoodkev") ||
-      !witness_votes.includes("yabapmatt") ||
-      !witness_votes.includes("aggroed"))
+    (!witness_votes.includes("fasolo97") ||
+      !witness_votes.includes("d00k13") ||
+      !witness_votes.includes("techcoderx"))
   ) {
-    $("#stoodkev img").attr(
+    $("#fasolo97 img").attr(
       "src",
       "../images/icon_witness-vote" +
-        (witness_votes.includes("stoodkev") ? "" : "_default") +
+        (witness_votes.includes("fasolo97") ? "" : "_default") +
         ".svg"
     );
-    $("#yabapmatt img").attr(
+    $("#d00k13 img").attr(
       "src",
       "../images/icon_witness-vote" +
-        (witness_votes.includes("yabapmatt") ? "" : "_default") +
+        (witness_votes.includes("d00k13") ? "" : "_default") +
         ".svg"
     );
-    $("#aggroed img").attr(
+    $("#techcoderx img").attr(
       "src",
       "../images/icon_witness-vote" +
-        (witness_votes.includes("aggroed") ? "" : "_default") +
+        (witness_votes.includes("techcoderx") ? "" : "_default") +
         ".svg"
     );
 
-    if (!witness_votes.includes("yabapmatt"))
-      $("#yabapmatt").click(function () {
-        voteFor("yabapmatt");
+    if (!witness_votes.includes("fasolo97"))
+      $("#fasolo97").click(function () {
+        voteFor("fasolo97");
       });
 
-    if (!witness_votes.includes("stoodkev"))
-      $("#stoodkev").click(function () {
-        voteFor("stoodkev");
+    if (!witness_votes.includes("d00k13"))
+      $("#d00k13").click(function () {
+        voteFor("d00k13");
       });
 
-    if (!witness_votes.includes("aggroed"))
-      $("#aggroed").click(function () {
-        voteFor("aggroed");
+    if (!witness_votes.includes("techcoderx"))
+      $("#techcoderx").click(function () {
+        voteFor("techcoderx");
       });
 
     setTimeout(function () {
@@ -694,55 +575,9 @@ const proposeWitnessVote = (witness_votes, proxy) => {
   }
 };
 
-const proposeVotes = async (name, witness_votes, proxy) => {
-  hive.api
-    .listProposalVotesAsync(
-      [PROPOSAL_ID, name],
-      1,
-      "by_proposal_voter",
-      "ascending",
-      "all"
-    )
-    .then((votes) => {
-      console.log("votes", votes);
-      if (votes[0].voter !== name && !proxy) {
-        console.log("show");
-        $("#proposal_vote").show();
-        $("#proposal_voter")
-          .unbind("click")
-          .click(() => {
-            $("#proposal_voter").prop("disabled", true);
-
-            hive.broadcast.send(
-              {
-                operations: [
-                  [
-                    "update_proposal_votes",
-                    {
-                      voter: name,
-                      proposal_ids: [`${PROPOSAL_ID}`],
-                      approve: "true",
-                    },
-                  ],
-                ],
-                extensions: [],
-              },
-              { active: activeAccount.getKey("active") },
-              (err, res) => {
-                $("#proposal_vote").hide();
-                if (err) {
-                  showError("Something went wrong!");
-                  console.log(err);
-                } else
-                  showConfirm("Succesfully voted for the Keychain proposal!");
-              }
-            );
-          });
-      } else {
-        $("#proposal_vote").hide();
-        proposeWitnessVote(witness_votes, proxy);
-      }
-    });
+async function proposeVotes(name, witness_votes) {
+  $("#proposal_vote").hide();
+  proposeWitnessVote(witness_votes);
 };
 
 $("#proposal_read").click(() => {

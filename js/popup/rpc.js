@@ -21,24 +21,23 @@ async function loadRPC(current_rpc) {
 
 async function refreshRpcLayout(current_rpc) {
   current_rpc = current_rpc.replace('(TESTNET)', '').trim();
+  current_rpc = current_rpc.trim();
   const listRPC = await rpcs.getList();
   const curRPCObj = listRPC.find((e) => e.uri.trim() === current_rpc);
   if (curRPCObj.testnet) {
-    $("#currency_send select").children("option:first").text("TESTS");
-    $("#currency_send select").children("option:first").val("TESTS");
-    $("#currency_send select").children("option:nth-child(2)").text("TBD");
-    $("#currency_send select").children("option:nth-child(2)").val("TBD");
-    $("#wallet_currency .wallet_currency").eq(0).text("TESTS");
-    $("#wallet_currency .wallet_currency").eq(1).text("TBD");
-    $("#wallet_currency .wallet_currency").eq(2).text("TP");
+    $("#currency_send select").children("option:first").text("TEST-DTC");
+    $("#currency_send select").children("option:first").val("TEST-DTC");
+    $("#currency_send select").children("option:nth-child(2)").text("TEST-VP");
+    $("#currency_send select").children("option:nth-child(2)").val("TEST-VP");
+    $("#wallet_currency .wallet_currency").eq(0).text("TEST-DTC");
+    $("#wallet_currency .wallet_currency").eq(1).text("TEST-VP");
   } else {
-    $("#currency_send select").children("option:first").text("HIVE");
-    $("#currency_send select").children("option:first").val("HIVE");
-    $("#currency_send select").children("option:nth-child(2)").text("HBD");
-    $("#currency_send select").children("option:nth-child(2)").val("HBD");
-    $("#wallet_currency .wallet_currency").eq(0).text("HIVE");
-    $("#wallet_currency .wallet_currency").eq(1).text("HBD");
-    $("#wallet_currency .wallet_currency").eq(2).text("HP");
+    $("#currency_send select").children("option:first").text("DTC");
+    $("#currency_send select").children("option:first").val("DTC");
+    $("#currency_send select").children("option:nth-child(2)").text("VP");
+    $("#currency_send select").children("option:nth-child(2)").val("VP");
+    $("#wallet_currency .wallet_currency").eq(0).text("DTC");
+    $("#wallet_currency .wallet_currency").eq(1).text("VP");
   }
 }
 

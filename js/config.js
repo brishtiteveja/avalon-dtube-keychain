@@ -1,3 +1,3 @@
 let config = {
-  mainNet: "ssc-mainnet-hive"
+  mainNet: "avalon_mainnet"
 };

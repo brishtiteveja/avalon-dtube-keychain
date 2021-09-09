@@ -149,7 +149,6 @@ $("#submit_unlock").click(function () {
   chrome.storage.local.get(["accounts"], function (items) {
     const pwd = $("#unlock_pwd").val();
     const accs = decryptToJson(items.accounts, pwd);
-    console.log(accs);
     if (accs) {
       mk = pwd;
       sendMk(mk);
@@ -217,7 +216,7 @@ function initializeMainMenu(options) {
       loadRPC(items.current_rpc);
       to_autocomplete = items.transfer_to ? JSON.parse(items.transfer_to) : {};
       accountsList.init(decryptToJson(items.accounts, mk), items.last_account);
-      hideHF25IfNeeded();
+      //hideHF25IfNeeded();
       $("#accounts").empty();
       if (!accountsList.isEmpty()) {
         $(".usernames").html("<select></select>");
@@ -245,16 +244,6 @@ function initializeMainMenu(options) {
   );
 }
 
-const hideHF25IfNeeded = async () => {
-  let version = (await hive.api.getVersionAsync()).blockchain_version;
-  version = version.match(/\.([^\.]+)\./)[1];
-  console.log("blockchain_version : ", version);
-  if (version < 25) {
-    $(".hf25").hide();
-  } else {
-    $(".hf25").show();
-  }
-};
 // Show Confirmation window before transfer
 $("#send_transfer").click(function () {
   confirmTransfer();

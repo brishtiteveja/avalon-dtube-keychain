@@ -371,7 +371,7 @@ $("#powerdown").click(function () {
 });
 
 $("#send_steem").click(async function () {
-  const balance = await activeAccount.getHive();
+  const balance = await activeAccount.getDTC();
   $("#send_div").show();
   $("#main").hide();
   $(".wallet_currency").removeClass("dropdown-open");
@@ -393,7 +393,7 @@ $("#send_steem").click(async function () {
 });
 
 $("#send_sbd").click(async function () {
-  const balance = await activeAccount.getHBD();
+  const balance = await activeAccount.getVP();
   $("#send_div").show();
   $("#main").hide();
   $(".wallet_currency").removeClass("dropdown-open");

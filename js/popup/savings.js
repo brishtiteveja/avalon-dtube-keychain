@@ -1,9 +1,9 @@
 $("#save_hive").click(async () => {
   $("#main").hide();
   $("#savings_div").show();
-  $("#currency_savings").text("HIVE");
-  $("#available_savings").text((await activeAccount.getHive()) + " HIVE");
-  $("#current_savings").text((await activeAccount.getHiveSavings()) + " HIVE");
+  $("#currency_savings").text("DTC");
+  $("#available_savings").text((await activeAccount.getDTC()) + " DTC");
+  $("#current_savings").text((await activeAccount.getVP()) + " VP");
   $("#savings_div .back_enabled").text(
     chrome.i18n.getMessage("popup_html_save_hive")
   );
@@ -44,7 +44,7 @@ $("#save_hbd").click(async () => {
   $("#savings_div").show();
   $("#currency_savings").text("HBD");
   $("#available_savings").text((await activeAccount.getHBD()) + " HBD");
-  $("#current_savings").text((await activeAccount.getHBDSavings()) + " HBD");
+  //$("#current_savings").text((await activeAccount.getHBDSavings()) + " HBD");
   $("#savings_div .back_enabled").text(
     chrome.i18n.getMessage("popup_html_save_hbd")
   );

@@ -1,8 +1,5 @@
 class GlobalProps {
   constructor() {
-    this.props = hive.api.getDynamicGlobalPropertiesAsync();
-    this.median = hive.api.getCurrentMedianHistoryPriceAsync();
-    this.fund = hive.api.getRewardFundAsync("post");
     this.prices = this.initGetPrice();
   }
   async getProps() {
@@ -20,19 +17,19 @@ class GlobalProps {
   async getHivePrice() {
     const median = await this.getMedian();
     return (
-      parseFloat(median.base.replace(" SBD", "")) /
-      parseFloat(median.quote.replace(" STEEM", ""))
+      parseFloat(median.base.replace(" USD", "")) /
+      parseFloat(median.quote.replace(" DTC", ""))
     );
   }
   async initGetPrice() {
     return await getPricesAsync();
   }
   async getPrices() {
-    let { hive, hbd, btc } = await this.prices;
-    console.log(hive, hbd, btc);
-    hive = hive.result["Bid"];
-    hbd = hbd.result["Bid"];
-    btc = btc.result["Bid"];
-    return [hive * btc, hbd * btc];
+    let prices = await this.prices;
+    var dtc2usd = prices["USD"].price;
+    var dtc2btc = prices["BTC"].price;
+    var dtc2eth = prices["ETH"].price;
+    var dtc2eur = prices["EUR"].price;
+    return {"USD": dtc2usd, "EUR": dtc2eur};
   }
 }

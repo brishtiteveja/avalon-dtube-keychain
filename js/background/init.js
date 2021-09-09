@@ -19,8 +19,6 @@ chrome.storage.local.get(
   ["current_rpc", "autolock", "claimRewards", "claimAccounts"],
   (items) => {
     if (items.autolock) startAutolock(JSON.parse(items.autolock));
-    startClaimRewards(items.claimRewards);
-    startClaimAccounts(items.claimAccounts);
     console.info("should set...", items.current_rpc);
     rpc.setOptions(items.current_rpc || "DEFAULT");
   }
@@ -150,8 +148,8 @@ const chromeMessageHandler = (msg, sender, sendResp) => {
         ["claimRewards", "claimAccounts"],
         ({ claimRewards, claimAccounts }) => {
           console.log("update", claimRewards);
-          startClaimRewards(claimRewards);
-          startClaimAccounts(claimAccounts);
+          //startClaimRewards(claimRewards);
+          //startClaimAccounts(claimAccounts);
         }
       );
       break;

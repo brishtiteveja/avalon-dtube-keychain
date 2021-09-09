@@ -9,7 +9,7 @@ html {
   border-radius: 1px;
   margin: 0 !important;
   padding: 0 !important;
-  background: transparent linear-gradient(330deg, #59626c 0%, #000000 100%) 0%
+  background: transparent linear-gradient(330deg, #000000 0%, #59626c 100%) 0%
     0% no-repeat padding-box !important;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -40,7 +40,7 @@ pre {
   position: absolute;
   width: 350px;
   height: 600px;
-  background: transparent url("../images/hive-watermark.png") 0% 0% no-repeat
+  /* background: transparent url("../images/hive-watermark.png") 0% 0% no-repeat */
     padding-box;
   opacity: 1;
 }

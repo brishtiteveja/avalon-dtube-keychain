@@ -1,10 +1,10 @@
 {
   "keychain": {
-    "message": "Hive Keychain",
+    "message": "Avalon Keychain",
     "description": "Extension name, night not need to translate it."
   },
   "description": {
-    "message": "Secure Hive Wallet Extension.",
+    "message": "Secure Avalon Wallet Extension.",
     "description": "Extension description, as shown in the store."
   },
   "transaction_error": {
@@ -60,11 +60,11 @@
     "description": "Full in x days x hours x minutes"
   },
   "popup_html_register": {
-    "message": "The ultimate <strong>HIVE</strong> wallet.<br/><br/>Manage HIVE assets, and connect to HIVE applications.<br/><br/>Simple. Lightweight. Secure.",
+    "message": "The ultimate <strong>DTUBE</strong> wallet.<br/><br/>Manage DTCs, and connect to Avalon applications.<br/><br/>Simple. Lightweight. Secure.",
     "description": "Text on registration page"
   },
   "popup_html_unlock": {
-    "message": "The ultimate <strong>HIVE</strong> wallet.<br/><br/>Manage HIVE assets, and connect to HIVE applications.<br/><br/>Simple. Lightweight. Secure.",
+    "message": "The ultimate <strong>DTUBE</strong> wallet.<br/><br/>Manage DTCs, and connect to Avalon applications.<br/><br/>Simple. Lightweight. Secure.",
     "description": "Text on unlock page"
   },
   "popup_html_new_password": {
@@ -132,7 +132,7 @@
     "description": "on popup main page"
   },
   "popup_html_witness": {
-    "message": "Witness",
+    "message": "Leaders",
     "description": "on popup main page"
   },
   "popup_html_estimation_info": {
@@ -448,15 +448,15 @@
     "description": "On claim reward page (click little gift icon from main page when rewards are available to claim)"
   },
   "popup_html_witness_title": {
-    "message": "Witness Voting",
+    "message": "Leader Voting",
     "description": "On witness page"
   },
   "popup_html_witness_disclaimer": {
-    "message": "You may vote for up to 30 witnesses.",
+    "message": "You may vote for up to 5 leaders.",
     "description": "On witness page"
   },
   "popup_html_witness_remaining": {
-    "message": "Votes remaining: <span>30</span>",
+    "message": "Votes remaining: <span>5</span>",
     "description": "On witness page"
   },
   "popup_html_witness_voted": {

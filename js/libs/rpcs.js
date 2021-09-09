@@ -1,11 +1,11 @@
 class Rpcs {
   constructor() {
-    this.currentRpc = "https://api.hive.blog/";
+    this.currentRpc = "https://avalon.d.tube/";
     this.awaitRollback = false;
-    this.DEFAULT_RPC_API = "https://api.hive-keychain.com/hive/rpc";
+    this.DEFAULT_RPC_API = "https://avalon.d.tube/";
     this.list = this.initList();
     this.isTestnet = false;
-    hive.config.set("rebranded_api", true);
+    //hive.config.set("rebranded_api", true);
   }
   getCurrent() {
     return this.currentRpc;
@@ -14,20 +14,11 @@ class Rpcs {
     let listRPC = [];
     const RPCs = [
       { uri: "DEFAULT", testnet: false },
-      { uri: "https://api.deathwing.me", testnet: false },
-      { uri: "https://api.hive.blog/", testnet: false },
-      { uri: "https://api.openhive.network/", testnet: false },
-      { uri: "https://api.hivekings.com/", testnet: false },
-      { uri: "https://anyx.io/", testnet: false },
-      { uri: "https://api.pharesim.me/", testnet: false },
-      { uri: "https://hived.emre.sh", testnet: false },
-      { uri: "https://hived.hive-engine.com/", testnet: false },
-      { uri: "https://hived.privex.io/", testnet: false },
-      { uri: "https://hive.roelandp.nl", testnet: false },
-      { uri: "https://rpc.ausbit.dev", testnet: false },
-      { uri: "https://rpc.ecency.com", testnet: false },
-      { uri: "https://techcoderx.com", testnet: false },
-      { uri: "https://hive-api.arcange.eu/", testnet: false },
+      { uri: "https://dtube.fso.ovh/", testnet: false },
+      { uri: "https://avalon.tibfox.com/", testnet: false },
+      { uri: "https://avalon.oneloved.tube/", testnet: false },
+      { uri: "https://dtube.club/mainnetapi/", testnet: false },
+      { uri: "https://dtube.club/testnetapi/", testnet: true }
     ];
 
     return new Promise((resolve) => {
@@ -88,20 +79,20 @@ class Rpcs {
       : list.find((e) => e.uri.trim() === this.currentRpc.trim());
 
     if (newRpc.testnet) {
-      hive.api.setOptions({
+      /*hive.api.setOptions({
         url: newRpc.uri,
         transport: "http",
         useAppbaseApi: true,
-      });
-      hive.config.set("address_prefix", "TST");
-      hive.config.set("chain_id", newRpc.chainId);
+      });*/
+      //hive.config.set("address_prefix", "TST");
+      //hive.config.set("chain_id", newRpc.chainId);
     } else {
       console.log("reset chain id");
-      hive.config.set("address_prefix", "STM");
-      hive.config.set(
+      //hive.config.set("address_prefix", "STM");
+      /*hive.config.set(
         "chain_id",
         "beeab0de00000000000000000000000000000000000000000000000000000000"
-      );
+      );*/
 
       if (newRpc.uri.trim() === "DEFAULT") {
         let rpc;
@@ -109,18 +100,22 @@ class Rpcs {
           rpc = (await this.getDefaultRPC()).rpc || this.list[1].uri;
           console.log(`Using ${rpc} as default.`);
         } catch (e) {
-          rpc = "https://api.hive.blog/";
+          rpc = "https://avalon.d.tube/";
         }
 
-        hive.api.setOptions({
+        /*hive.api.setOptions({
           url: rpc,
           useAppbaseApi: true,
         });
+        */
       } else {
+        /*
         hive.api.setOptions({
           url: newRpc.uri,
           useAppbaseApi: true,
         });
+        */
+        rpc = newRpc.uri;
       }
     }
     this.previousRpc = this.currentRpc;

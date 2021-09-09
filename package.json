@@ -1,29 +1,29 @@
 {
-  "name": "hive-keychain",
-  "version": "1.14.1.1",
-  "description": "Hive Keychain extension",
+  "name": "avalon-keychain",
+  "version": "1.0",
+  "description": "Avalon Keychain extension",
   "main": "index.js",
   "directories": {
     "example": "example"
   },
   "scripts": {
-    "doc": "documentation build js/hive_keychain.js -f md -c documentation.yml -o README.md"
+    "doc": "documentation build js/avalon_keychain.js -f md -c documentation.yml -o README.md"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stoodkev/hive-keychain.git"
+    "url": "git+https://github.com/MrFasolo97/avalon-keychain"
   },
   "keywords": [
-    "hive",
+    "avalon",
     "keychain",
     "extension"
   ],
-  "author": "stoodkev",
+  "author": "MrFasolo97",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stoodkev/hive-keychain/issues"
+    "url": "https://github.com/MrFasolo97/avalon-keychain/issues"
   },
-  "homepage": "https://github.com/stoodkev/hive-keychain#readme",
+  "homepage": "https://github.com/MrFasolo97/avalon-keychain#readme",
   "dependencies": {
     "documentation": "^13.0.0"
   }

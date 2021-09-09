@@ -1,11 +1,10 @@
 let witness_ranks = null;
 
-async function prepareWitnessDiv(witness_votes, proxy) {
+async function prepareWitnessDiv(activeAccount) {
+  var witness_votes = activeAccount.info.approves;
   witness_ranks = await getWitnessRanks();
-  $("#votes_remaining span").html(30 - witness_votes.length);
-  if (proxy != "") {
-    $("#proxy div").html(`${chrome.i18n.getMessage("popup_proxy")}: @${proxy}`);
-    $("#proxy").show();
+  $("#votes_remaining span").html(5 - witness_votes.length);
+  if (false) {
   } else $("#proxy").hide();
   if (!activeAccount.hasKey("active")) $("#proxy div").addClass("no_active");
   else $("#proxy div").removeClass("no_active");
@@ -42,7 +41,7 @@ async function prepareWitnessDiv(witness_votes, proxy) {
       if (i <= 100)
         $("#top100_div").append(
           "<div class='witness-row'><span class='wit-rank'>" +
-            wit.rank +
+            i +
             "</span><span class='witName'>@" +
             wit.name +
             "</span><span class='" +
@@ -55,19 +54,6 @@ async function prepareWitnessDiv(witness_votes, proxy) {
   if (!activeAccount.hasKey("active")) $(".wit-vote").addClass("no_cursor");
   else $(".wit-vote").removeClass("no_cursor");
 
-  $("#proxy div")
-    .unbind("click")
-    .click(function() {
-      $("#proxy").hide();
-      hive.broadcast.accountWitnessProxy(
-        activeAccount.getKey("active"),
-        activeAccount.getName(),
-        "",
-        function(err, result) {
-          console.error(err, result);
-        }
-      );
-    });
 
   $(".wit-vote")
     .unbind("click")

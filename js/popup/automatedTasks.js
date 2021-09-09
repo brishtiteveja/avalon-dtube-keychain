@@ -4,7 +4,8 @@ let taskUsername;
 const showAutomatedTasks = async (user, items) => {
   if (items) tasks.init(items);
   taskUsername = user;
-  const rc = await getRC(user);
+  //const rc = await getRC(user);
+  /*
   console.log(
     rc.estimated_max,
     CLAIM_ACCOUNT_RC,
@@ -16,7 +17,7 @@ const showAutomatedTasks = async (user, items) => {
   } else {
     $("#autoclaim_accounts_checkbox").show();
   }
-
+  */
   const claimRewards = tasks.getTaskByUser("claimRewards", user);
   const claimAccounts = tasks.getTaskByUser("claimAccounts", user);
   $("#autoclaim_rewards_checkbox")
@@ -37,6 +38,6 @@ $("#autoclaim_rewards_checkbox").click(() => {
 $("#autoclaim_accounts_checkbox").click(() => {
   const newState = !$("#enable_autoclaim_accounts_box").prop("checked");
   $("#enable_autoclaim_accounts_box").prop("checked", newState);
-  if (newState) tasks.setTaskForUser("claimAccounts", taskUsername, true);
-  else tasks.removeTaskForUser("claimAccounts", taskUsername);
+  //if (newState) tasks.setTaskForUser("claimAccounts", taskUsername, true);
+  //else tasks.removeTaskForUser("claimAccounts", taskUsername);
 });
