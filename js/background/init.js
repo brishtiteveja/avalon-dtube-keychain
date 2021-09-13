@@ -147,7 +147,7 @@ const chromeMessageHandler = (msg, sender, sendResp) => {
       chrome.storage.local.get(
         ["claimRewards", "claimAccounts"],
         ({ claimRewards, claimAccounts }) => {
-          console.log("update", claimRewards);
+          //console.log("update", claimRewards);
           //startClaimRewards(claimRewards);
           //startClaimAccounts(claimAccounts);
         }
