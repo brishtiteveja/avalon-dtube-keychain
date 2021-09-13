@@ -32,6 +32,17 @@ function getPubkeyWeight(
   return 0;
 }
 
+function checkMatchBetweenKeyUserdata(pubkey, userdata) {
+  r = false;
+  for(var key in userdata.keys) {
+    key = userdata.keys[key];
+    if(key.pub == pubkey) {
+      r = true;
+    }
+  }
+  return r;
+}
+
 // Load account information
 const loadAccount = async (name, options) => {
   console.log(`Load account ${name}`);
@@ -200,45 +211,38 @@ $("#check_add_account").click(function () {
       showError(
         chrome.i18n.getMessage("popup_accounts_already_registered", [username])
       );
-    } else
-      var result = javalon.getAccount(username, function (result, err) {
+    } else {
+      javalon.getAccount(username, (err, result) => {
         if (result.length != 0) {
-          console.log(javalon.privToPub(pwd));
-          if (javalon.privToPub(pwd)) {
-            const pub_unknown = javalon.privToPub(pwd);
-              addAccount({
-                name: username,
-                keys: {
-                  active: pwd,
-                  activePubkey: pub_unknown,
-                },
-              }
-            )
-          } else {
-            showError(INCORRECT_USER);
-          };
-        } else {
-          const key = pwd;
-          if (
-            has_active > 0 ||
-            has_posting > 0 ||
-            keys.memoPubkey == pub_memo
-          ) {
-            $("#posting_key").prop("checked", has_posting);
-            $("#posting_key").prop("disabled", !has_posting);
-            $("#active_key").prop("checked", has_active);
-            $("#active_key").prop("disabled", !has_active);
-            $("#memo_key").prop("checked", keys.memoPubkey == pub_memo);
-            $("#memo_key").prop("disabled", keys.memoPubkey != pub_memo);
-            $("#add_account_div").hide();
-            $("#master_check").show();
+          if(checkMatchBetweenKeyUserdata(javalon.privToPub(pwd), result)) {
+              const pub_unknown = javalon.privToPub(pwd);
+                addAccount({
+                  name: username,
+                  keys: {
+                    active: pwd,
+                    activePubkey: pub_unknown,
+                  }
+                });
+                const key = pwd;
+                $("#posting_key").prop("checked", has_posting);
+                $("#posting_key").prop("disabled", !has_posting);
+                $("#active_key").prop("checked", has_active);
+                $("#active_key").prop("disabled", !has_active);
+                $("#memo_key").prop("checked", keys.memoPubkey == pub_memo);
+                $("#memo_key").prop("disabled", keys.memoPubkey != pub_memo);
+                $("#add_account_div").hide();
+                $("#master_check").show();
           } else {
             showError(INCORRECT_KEY);
-          }
-       }
-    });
+         }
+        } else {
+          console.log(JSON.stringify(err));
+          showError(INCORRECT_USER);
+        }
+      });
+    }
   } else
-    showError(FILL);
+  showError(FILL);
 });
 
 // If master key was entered, handle which keys to save.
@@ -409,10 +413,9 @@ const manageKeys = (name) => {
       const keys = accountsList.getById(index).getKeys();
       const pwd = $("#new_key").val();
 
-      var result = javalon.getAccount(username, function (result, err) {
+      javalon.getAccount(accountsList.getById(index).getName(), (result) => {
         if (result.length != 0) {
-          console.log(javalon.privToPub(pwd));
-          if (javalon.privToPub(pwd)) {
+          if (checkMatchBetweenKeyUserdata(javalon.privToPub(pwd), result)) {
             const pub_unknown = javalon.privToPub(pwd);
               addAccount({
                 name: username,
