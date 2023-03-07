@@ -108,7 +108,7 @@
   },
   "popup_html_send": {
     "message": "Send $1",
-    "description": "ex: Send HIVE"
+    "description": "ex: Send DTC"
   },
   "popup_html_pu": {
     "message": "Power Up"
@@ -404,8 +404,8 @@
     "description": "When initiating a HIVE or HBD transfer"
   },
   "popup_html_add_active": {
-    "message": "Please add an active key to send HIVE or HBD.",
-    "description": "When trying to send HIVE or HBD but active key was not stored"
+    "message": "Please add an active key to Send DTC.",
+    "description": "When trying to Send DTC but active key was not stored"
   },
   "popup_html_transfer": {
     "message": "Transfer",
@@ -641,15 +641,15 @@
   },
   "popup_empty": {
     "message": "Empty",
-    "description": "On send HIVE/HBD confirmation page, when memo is empty"
+    "description": "On send DTC confirmation page, when memo is empty"
   },
   "popup_none": {
     "message": "None",
-    "description": "On send HIVE/HBD confirmation page, when memo is empty"
+    "description": "On send DTC confirmation page, when memo is empty"
   },
   "popup_encrypted": {
     "message": "encrypted",
-    "description": "On send HIVE/HBD confirmation page, when memo is encrypted"
+    "description": "On send DTC confirmation page, when memo is encrypted"
   },
   "popup_witness_key": {
     "message": "Please add your active key to vote for witnesses!",
@@ -1139,7 +1139,7 @@
     "description": "Generic answer to websites when user cancel transaction (in the background so it wont show on screen)"
   },
   "bgd_context_transfer_user": {
-    "message": "Transfer HIVE/HBD to @%s",
+    "message": "Transfer DTC to @%s",
     "description": "Context menu (when right click on a username on steemit)"
   },
   "bgd_context_memo_user": {
@@ -1151,7 +1151,7 @@
     "description": "Context menu (when right click on a username on steemit)"
   },
   "bgd_context_transfer_author": {
-    "message": "Transfer HIVE/HBD to this author",
+    "message": "Transfer DTC to this author",
     "description": "Context menu (when right click on a username on steemit)"
   },
   "bgd_context_memo_author": {
@@ -1393,7 +1393,7 @@
     "description": "When wallet is disabled on exchange."
   },
   "popup_html_buy_hive": {
-    "message": "Buy HIVE",
+    "message": "Buy DTC",
     "description": "When clicking on the Hive arrow menu"
   },
   "popup_html_save_hive": {
@@ -1478,19 +1478,19 @@
   },
   "popup_html_buy_intro": {
     "message": "Chose your favorite method and buy $1 fast and easily. Keychain do not take any additional fees on the transactions.",
-    "description": "When accessing the buy HIVE/HBD page"
+    "description": "When accessing the buy DTC page"
   },
   "popup_html_buy_moonpay_title": {
     "message": "Credit Card / Transfer",
-    "description": "When accessing the buy HIVE/HBD page"
+    "description": "When accessing the buy DTC page"
   },
   "popup_html_buy_swap_title": {
     "message": "Quick trade",
-    "description": "When accessing the buy HIVE/HBD page"
+    "description": "When accessing the buy DTC page"
   },
   "popup_html_buy_exchanges_title": {
     "message": "Traditional exchanges",
-    "description": "When accessing the buy HIVE/HBD page"
+    "description": "When accessing the buy DTC page"
   },
   "dialog_keys": {
     "message": "Private Keys",
