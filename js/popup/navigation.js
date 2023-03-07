@@ -476,18 +476,20 @@ $("#confirm_token_send_div .back_enabled").click(function () {
 });
 
 $("#buy_hive").click(() => {
-  $("#main").hide();
-  renderExchangesList("HIVE");
-  $("#buy_div .back_enabled").text(
-    chrome.i18n.getMessage("popup_html_buy_hive")
-  );
-  $("#buy_div p").text(
-    chrome.i18n.getMessage("popup_html_buy_intro", ["HIVE"])
-  );
+  swap_exchange_url = "https://pancakeswap.finance/swap?outputCurrency=0xd3cceb42b544e91eee02eb585cc9a7b47247bfde";
+  window.open(swap_exchange_url, '_blank');
+  // $("#main").hide();
+  // renderExchangesList("HIVE");
+  // $("#buy_div .back_enabled").text(
+  //   chrome.i18n.getMessage("popup_html_buy_hive")
+  // );
+  // $("#buy_div p").text(
+  //   chrome.i18n.getMessage("popup_html_buy_intro", ["HIVE"])
+  // );
 
-  $("#buy_div").show();
-  $(".buy_hbd").hide();
-  $(".buy_hive").show();
+  // $("#buy_div").show();
+  // $(".buy_hbd").hide();
+  //$(".buy_div").hide();
 });
 
 $("#buy_hbd").click(() => {

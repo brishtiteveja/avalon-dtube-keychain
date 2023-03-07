@@ -31,7 +31,7 @@ $("#vm_title").text(chrome.i18n.getMessage("popup_html_vm"));
 $("#rc_title").text(chrome.i18n.getMessage("popup_html_rc"));
 
 // Main - actions
-$("#send_steem").append(chrome.i18n.getMessage("popup_html_send", ["HIVE"]));
+$("#send_steem").append(chrome.i18n.getMessage("popup_html_send", ["DTC"]));
 $("#send_sbd").append(chrome.i18n.getMessage("popup_html_send", ["HBD"]));
 $("#powerup").append(chrome.i18n.getMessage("popup_html_pu"));
 $("#powerdown").append(chrome.i18n.getMessage("popup_html_pd"));
