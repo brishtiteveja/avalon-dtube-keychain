@@ -15,10 +15,10 @@ class Rpcs {
     const RPCs = [
       { uri: "DEFAULT", testnet: false },
       { uri: "https://dtube.fso.ovh/", testnet: false },
-      { uri: "https://avalon.tibfox.com/", testnet: false },
-      { uri: "https://avalon.oneloved.tube/", testnet: false },
-      { uri: "https://dtube.club/mainnetapi/", testnet: false },
-      { uri: "https://dtube.club/testnetapi/", testnet: true }
+      { uri: "https://api.avalonblocks.com/", testnet: false },
+      { uri: "https://avalon.d.tube/", testnet: false },
+      { uri: "https://dtube.club/testnetapi/", testnet: true },
+      { uri: "https://testnet.dtube.fso.ovh/", testnet: true }
     ];
 
     return new Promise((resolve) => {

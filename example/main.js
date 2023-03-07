@@ -1,6 +1,6 @@
 // Send Handshake event
 $("#sw-handshake").click(function () {
-  hive_keychain.requestHandshake(function () {
+  avalon_keychain.requestHandshake(function () {
     console.log("Handshake received!");
   });
 });
@@ -9,7 +9,7 @@ $("#sw-handshake").click(function () {
 
 // Send decryption request
 $("#send_decode").click(function () {
-  hive_keychain.requestVerifyKey(
+  avalon_keychain.requestVerifyKey(
     $("#decode_user").val(),
     $("#decode_message").val(),
     $("#decode_method option:selected").text(),
@@ -21,7 +21,7 @@ $("#send_decode").click(function () {
 });
 
 $("#send_encode").click(() => {
-  hive_keychain.requestEncodeMessage(
+  avalon_keychain.requestEncodeMessage(
     $("#encode_user").val(),
     $("#encode_receiver").val(),
     $("#encode_message").val(),
@@ -35,7 +35,7 @@ $("#send_encode").click(() => {
 
 // Send post request
 $("#send_post").click(function () {
-  hive_keychain.requestPost(
+  avalon_keychain.requestPost(
     $("#post_username").val(),
     $("#post_title").val(),
     $("#post_body").val(),
@@ -53,7 +53,7 @@ $("#send_post").click(function () {
 
 // Send vote request
 $("#send_vote").click(function () {
-  hive_keychain.requestVote(
+  avalon_keychain.requestVote(
     $("#vote_username").val(),
     $("#vote_perm").val(),
     $("#vote_author").val(),
@@ -68,7 +68,7 @@ $("#send_vote").click(function () {
 // Send Custom JSON request
 $("#send_custom").click(function () {
   console.log("click");
-  hive_keychain.requestCustomJson(
+  avalon_keychain.requestCustomJson(
     $("#custom_username").val(),
     $("#custom_id").val(),
     $("#custom_method option:selected").text(),
@@ -85,7 +85,7 @@ $("#send_custom").click(function () {
 // Send transfer request
 $("#send_tra").click(function () {
   console.log("transfer");
-  hive_keychain.requestTransfer(
+  avalon_keychain.requestTransfer(
     $("#transfer_username").val(),
     $("#transfer_to").val(),
     $("#transfer_val").val(),
@@ -101,7 +101,7 @@ $("#send_tra").click(function () {
 
 // Send tokens request
 $("#sendTokens").click(function () {
-  hive_keychain.requestSendToken(
+  avalon_keychain.requestSendToken(
     $("#tokens_username").val(),
     $("#tokens_to").val(),
     $("#tokens_qt").val(),
@@ -118,7 +118,7 @@ $("#sendTokens").click(function () {
 
 // Send delegation
 $("#send_delegation").click(function () {
-  hive_keychain.requestDelegation(
+  avalon_keychain.requestDelegation(
     $("#delegation_username").val(),
     $("#delegation_delegatee").val(),
     $("#delegation_sp").val(),
@@ -131,7 +131,7 @@ $("#send_delegation").click(function () {
 });
 
 $("#send_signature").click(function () {
-  hive_keychain.requestSignBuffer(
+  avalon_keychain.requestSignBuffer(
     $("#sign_username").val(),
     $("#sign_message").val(),
     $("#sign_method option:selected").text(),
@@ -147,7 +147,7 @@ $("#send_signature").click(function () {
 });
 
 $("#send_sign_tx").click(function () {
-  hive_keychain.requestSignTx(
+  avalon_keychain.requestSignTx(
     $("#tx_username").val(),
     JSON.parse($("#tx").val()),
     $("#tx_type option:selected").text(),
@@ -159,7 +159,7 @@ $("#send_sign_tx").click(function () {
 });
 
 $("#send_addauth").click(function () {
-  hive_keychain.requestAddAccountAuthority(
+  avalon_keychain.requestAddAccountAuthority(
     $("#addauth_username").val(),
     $("#addauth_authorized_username").val(),
     $("#addauth_role option:selected").text(),
@@ -172,7 +172,7 @@ $("#send_addauth").click(function () {
 });
 
 $("#send_removeauth").click(function () {
-  hive_keychain.requestRemoveAccountAuthority(
+  avalon_keychain.requestRemoveAccountAuthority(
     $("#removeauth_username").val(),
     $("#removeauth_authorized_username").val(),
     $("#removeauth_role option:selected").text(),
@@ -185,7 +185,7 @@ $("#send_removeauth").click(function () {
 
 $("#send_addkey").click(function () {
   console.log("add key");
-  hive_keychain.requestAddKeyAuthority(
+  avalon_keychain.requestAddKeyAuthority(
     $("#addkey_username").val(),
     $("#addkey_authorized_key").val(),
     $("#addkey_role option:selected").text(),
@@ -198,7 +198,7 @@ $("#send_addkey").click(function () {
 });
 
 $("#send_removekey").click(function () {
-  hive_keychain.requestRemoveKeyAuthority(
+  avalon_keychain.requestRemoveKeyAuthority(
     $("#removekey_username").val(),
     $("#removekey_authorized_key").val(),
     $("#removekey_role option:selected").text(),
@@ -210,7 +210,7 @@ $("#send_removekey").click(function () {
 });
 
 $("#send_broadcast").click(function () {
-  hive_keychain.requestBroadcast(
+  avalon_keychain.requestBroadcast(
     $("#broadcast_username").val(),
     $("#broadcast_operations").val(),
     $("#broadcast_method option:selected").text(),
@@ -222,7 +222,7 @@ $("#send_broadcast").click(function () {
 });
 
 $("#send_signed_call").click(function () {
-  hive_keychain.requestSignedCall(
+  avalon_keychain.requestSignedCall(
     $("#signed_call_username").val(),
     $("#signed_call_method").val(),
     JSON.parse($("#signed_call_params").val()),
@@ -235,7 +235,7 @@ $("#send_signed_call").click(function () {
 });
 
 $("#send_witness_vote").click(function () {
-  hive_keychain.requestWitnessVote(
+  avalon_keychain.requestWitnessVote(
     $("#witness_username").val(),
     $("#witness").val(),
     $("#vote_wit").is(":checked"),
@@ -246,99 +246,8 @@ $("#send_witness_vote").click(function () {
   );
 });
 
-$("#send_proxy").click(function () {
-  hive_keychain.requestProxy(
-    $("#proxy_username").val(),
-    $("#proxy").val() ? $("#proxy").val() : "",
-    function (response) {
-      console.log("main js response - proxy");
-      console.log(response);
-    }
-  );
-});
-
-$("#send_pu").click(function () {
-  hive_keychain.requestPowerUp(
-    $("#pu_username").val(),
-    $("#pu_recipient").val(),
-    $("#pu_steem").val(),
-    function (response) {
-      console.log("main js response - power up");
-      console.log(response);
-    }
-  );
-});
-
-$("#send_pd").click(function () {
-  hive_keychain.requestPowerDown(
-    $("#pd_username").val(),
-    $("#pd_sp").val(),
-    function (response) {
-      console.log("main js response - power down");
-      console.log(response);
-    }
-  );
-});
-
-$("#send_create_claimed").click(function () {
-  hive_keychain.requestCreateClaimedAccount(
-    $("#create_claimed_username").val(),
-    $("#create_claimed_new_username").val(),
-    $("#create_claimed_owner").val(),
-    $("#create_claimed_active").val(),
-    $("#create_claimed_posting").val(),
-    $("#create_claimed_memo").val(),
-    function (response) {
-      console.log("main js response - create claimed account");
-      console.log(response);
-    }
-  );
-});
-
-$("#send_cp").click(function () {
-  hive_keychain.requestCreateProposal(
-    $("#cp_username").val(),
-    $("#cp_receiver").val(),
-    $("#cp_subject").val(),
-    $("#cp_permlink").val(),
-    $("#cp_daily_pay").val(),
-    $("#cp_start").val(),
-    $("#cp_end").val(),
-    $("#cp_extensions").val(),
-    function (response) {
-      console.log("main js response - create proposal");
-      console.log(response);
-    }
-  );
-});
-
-$("#send_rp").click(function () {
-  hive_keychain.requestRemoveProposal(
-    $("#rp_username").val(),
-    $("#rp_proposal_ids").val(),
-    $("#cp_extensions").val(),
-    function (response) {
-      console.log("main js response - remove proposal");
-      console.log(response);
-    }
-  );
-});
-
-$("#send_vp").click(function () {
-  hive_keychain.requestUpdateProposalVote(
-    $("#vp_username").val(),
-    $("#vp_proposal_ids").val(),
-    $("#vp_approve").is(":checked"),
-    $("#vp_extensions").val(),
-    function (response) {
-      console.log("main js response - update proposal votes");
-      console.log(response);
-    }
-  );
-});
-
 $("#send_save").click(function () {
-  hive_keychain.requestAddAccount(
+  avalon_keychain.requestAddAccount(
     $("#save_username").val(),
     JSON.parse($("#save_keys").val()),
     function (response) {
@@ -349,7 +258,7 @@ $("#send_save").click(function () {
 });
 
 $("#send_con").click(function () {
-  hive_keychain.requestConversion(
+  avalon_keychain.requestConversion(
     $("#con_username").val(),
     $("#con_amount").val(),
     $("#con_collaterized").is(":checked"),
@@ -360,18 +269,3 @@ $("#send_con").click(function () {
   );
 });
 
-$("#send_rec").click(function () {
-  hive_keychain.requestRecurrentTransfer(
-    $("#rec_username").val().length ? $("#rec_username").val() : null,
-    $("#rec_to").val(),
-    $("#rec_amount").val(),
-    $("#rec_currency option:selected").text(),
-    $("#rec_memo").val(),
-    parseInt($("#rec_recurrence").val()),
-    parseInt($("#rec_ex").val()),
-    function (response) {
-      console.log("main js response - recurrent transfer");
-      console.log(response);
-    }
-  );
-});

@@ -68,7 +68,6 @@ const loadAccount = async (name, options) => {
 
   await showUserData(activeAccount);
   var witness_votes = activeAccount.info.approves;
-  console.log("witness_votes: "+JSON.stringify(witness_votes));
   //claimRewards();
   prepareWitnessDiv(activeAccount);
   //prepareDelegationTab();
@@ -85,8 +84,8 @@ const showUserData = async (activeAccount) => {
   console.log("show bal");
   const balance =
     $("#currency_send .select-selected").text() === "DTC"
-      ? (await (activeAccount.getDTC()))
-      : (await (activeAccount.getVP()));
+      ? await activeAccount.getDTC()
+      : await activeAccount.getVP();
   $(".transfer_balance div").eq(1).html(balance);
   $("#amt_send_max")
     .unbind("click")
@@ -465,10 +464,8 @@ const addKeys = (i, key, priv, pub, name) => {
 
 // show balance for this account
 const showBalances = async (activeAccount) => {
-  const dtc_balance = await (activeAccount.getDTC());
-  const vp_balance = await (activeAccount.getVP());
-  $(".main_currency#vp_balance").html(""+vp_balance);
-  $(".main_currency#dtc_balance").html(""+dtc_balance.toFixed(2));
+  $(".main_currency#vp_balance").html("" + await activeAccount.getVP());
+  $(".main_currency#dtc_balance").html("" + (await activeAccount.getDTC()).toFixed(2));
   $("#balance_loader").hide();
 };
 
@@ -516,11 +513,11 @@ const claimRewards = async () => { /*
 };
 
 const proposeWitnessVote = async function(witness_votes) {
-  var witness_votes = (await witness_votes);
+  var witness_votes = await witness_votes;
   if (
     (!witness_votes.includes("fasolo97") ||
-      !witness_votes.includes("d00k13") ||
-      !witness_votes.includes("techcoderx"))
+      !witness_votes.includes("brishtiteveja0595") ||
+      !witness_votes.includes(""))
   ) {
     $("#fasolo97 img").attr(
       "src",
@@ -528,34 +525,35 @@ const proposeWitnessVote = async function(witness_votes) {
         (witness_votes.includes("fasolo97") ? "" : "_default") +
         ".svg"
     );
-    $("#d00k13 img").attr(
+    $("#brishtiteveja0595 img").attr(
       "src",
       "../images/icon_witness-vote" +
-        (witness_votes.includes("d00k13") ? "" : "_default") +
+        (witness_votes.includes("brishtiteveja0595") ? "" : "_default") +
         ".svg"
     );
-    $("#techcoderx img").attr(
+    /*
+    $("# img").attr(
       "src",
       "../images/icon_witness-vote" +
-        (witness_votes.includes("techcoderx") ? "" : "_default") +
+        (witness_votes.includes("") ? "" : "_default") +
         ".svg"
     );
-
+    */
     if (!witness_votes.includes("fasolo97"))
       $("#fasolo97").click(function () {
         voteFor("fasolo97");
       });
 
-    if (!witness_votes.includes("d00k13"))
-      $("#d00k13").click(function () {
-        voteFor("d00k13");
+    if (!witness_votes.includes("brishtiteveja0595"))
+      $("#brishtiteveja0595").click(function () {
+        voteFor("brishtiteveja0595");
       });
-
-    if (!witness_votes.includes("techcoderx"))
-      $("#techcoderx").click(function () {
-        voteFor("techcoderx");
+    /*
+    if (!witness_votes.includes(""))
+      $("#").click(function () {
+        voteFor("");
       });
-
+    */
     setTimeout(function () {
       $("#witness_votes").show();
       $("#witness_votes").animate(

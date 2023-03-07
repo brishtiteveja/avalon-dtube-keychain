@@ -1,10 +1,10 @@
 {
   "keychain": {
-    "message": "Hive Keychain",
+    "message": "Avalon Keychain",
     "description": "Extension name, night not need to translate it."
   },
   "description": {
-    "message": "Secure Hive Wallet Extension.",
+    "message": "Secure Avalon Wallet Extension.",
     "description": "Extension description, as shown in the store."
   },
   "transaction_error": {

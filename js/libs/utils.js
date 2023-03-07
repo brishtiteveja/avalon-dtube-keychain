@@ -238,7 +238,7 @@ function getTimeBeforeFull(votingPower) {
   return chrome.i18n.getMessage("full_in", [fullInString]);
 }
 
-// Get STEEM price from Bittrex
+// Get DTC price from my API node (Ionomy)
 function getPricesAsync() {
   return new Promise(function (resolve, reject) {
     $.ajax({
@@ -258,7 +258,7 @@ function getPricesAsync() {
   });
 }
 
-// get Witness Ranks from SteemPlus API
+// get Witness Ranks from current avalon API node
 function getWitnessRanks() {
   return new Promise(function (resolve, reject) {
     $.ajax({
@@ -267,7 +267,7 @@ function getWitnessRanks() {
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.setRequestHeader("X-Parse-Application-Id", chrome.runtime.id);
       },
-      url: "https://dtube.fso.ovh/rank/leaders",
+      url: rpcs.getCurrent() + "rank/leaders",
       success: function (response) {
         resolve(response);
       },

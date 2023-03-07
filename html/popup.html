@@ -90,8 +90,8 @@
           <div class="currency-section">
             <div class="wallet_currency">DTC</div>
             <div class="dropdown">
-              <div id="send_steem"><img src="../images/transfer.png" /></div>
-              <div id="buy_hive"><img src="../images/buy.svg" /></div>
+              <div id="send_dtc"><img src="../images/transfer.png" /></div>
+              <div id="buy_dtc"><img src="../images/buy.svg" /></div>
             </div>
           </div>
           <div class="currency-section">
@@ -112,7 +112,6 @@
       </div>
       <button class="dash-button main-button" id="send"></button>
       <button class="dash-button main-button" id="history"></button>
-      <button class="dash-button main-button" id="tokens"></button>
       <button class="dash-button main-button" id="witness"></button>
     </div>
     <div id="estimation_info" class="hide-at-start">
@@ -464,34 +463,13 @@
 
         <div class="custom-select" id="currency_send">
           <select>
-            <option value="HIVE">HIVE</option>
-            <option value="HBD">HBD</option>
+            <option value="DTC">DTC</option>
           </select>
         </div>
         <div class="send_max_div">
           <span class="send_max" id="amt_send_max"></span>
         </div>
         <input type="text" id="memo_send" />
-        <div class="recurrent_transfer hf25">
-          <label for="recurrent_transfer_checkbox" class="checkbox_container">
-            <div></div>
-            <input type="checkbox" id="recurrent_transfer_checkbox" />
-            <span class="checkmark" />
-          </label>
-        </div>
-        <div class="recurrent_transfer_checked hide-at-start ">
-          <p></p>
-          <input
-          type="number"
-          id="recurrence"
-          autocomplete="off"
-          placeholder="recurrence"
-        /><input
-        type="number"
-        id="rec_iterations"
-        autocomplete="off"
-        placeholder="executions"
-      />
         </div>
         <button id="send_transfer"></button>
       </div>
@@ -836,15 +814,15 @@
           class="input_img_right_submit"
         />
       </div>
-      <div class="witness_container" id="d00k13">
-        <button>@d00k13</button>
+      <div class="witness_container" id="brishtiteveja0595">
+        <button>@brishtiteveja0595</button>
         <img
           src="../images/icon_witness-vote_default.svg"
           class="input_img_right_submit"
         />
       </div>
-      <div class="witness_container" id="techcoderx">
-        <button>@techcoderx</button>
+      <div class="witness_container" id="">
+        <button></button>
         <img
           src="../images/icon_witness-vote_default.svg"
           class="input_img_right_submit"

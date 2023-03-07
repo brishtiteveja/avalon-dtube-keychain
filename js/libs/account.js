@@ -1,7 +1,12 @@
 class Account {
   constructor(obj) {
     this.account = obj || {};
+    this.vp = -1;
+    this.dtc = -1;
+    this.bw = -1;
     this.info = {};
+    this.lastVPUpdateTS = 0;
+    this.lastBWUpdateTS = 0;
   }
   init() {
     this.updateUserData();
@@ -14,9 +19,8 @@ class Account {
       console.error(err);
     }
   }
-  updateUserData() {
-    javalon.getAccount(this.account.name, (err, res) => {
-      this.info = res;
+  async updateUserData() {
+    await javalon.getAccount(this.account.name, (err, res) => {
       this.saveAccountInfo(err, res);
     });
   }
@@ -130,52 +134,25 @@ class Account {
   }
 
   async getVP() {
-    await javalon.getAccount(this.account.name, (err, result) => {
-      this.vp = result.vt.v;
-    });
-    return this.vp;
+    if (this.lastVPUpdateTS + 60000 < Date.now()) {
+      await javalon.getAccount(this.account.name, (err, result) => {
+        if(err) throw err;
+        this.vp = result.vt.v;
+      });
+    }
+    if(this.vp !== -1)
+      return this.vp;
   }
 
-  async getHBDSavings() {
-    return (await this.getAccountInfo("savings_hbd_balance"))
-      .replace(" HBD", "")
-      .replace(" TBD", "");
-  }
-  async getHBD() {
-    if (await this.getAccountInfo("sbd_balance"))
-      return (await this.getAccountInfo("sbd_balance"))
-        .replace(" HBD", "")
-        .replace(" TBD", "");
-    else
-      return (await this.getVP());
-  }
-
-  async getHP() {
-    return await this.toHP(
-      (await this.getAccountInfo("vesting_shares")).replace(" VESTS", "")
-    );
-  }
-
-  async getMaxPD() {
-    return Math.max(
-      0,
-      parseFloat(
-        await this.toHP(
-          parseFloat(
-            (await this.getAccountInfo("vesting_shares")).replace(" VESTS", "")
-          ) -
-            parseFloat(
-              (
-                await this.getAccountInfo("delegated_vesting_shares")
-              ).replace(" VESTS", "")
-            )
-        )
-      ) - 5
-    );
-  }
-
-  async getRC() {
-    return await getRC(this.account.name);
+  async getBW() {
+    if (this.lastBWUpdateTS + 60000 < Date.now()) {
+      await javalon.getAccount(this.account.name, (err, result) => {
+        if(err) throw err;
+        this.bw = result.bw;
+      });
+    }
+    if(this.bw !== -1)
+      return this.bw;
   }
 
   async getVotingDollars(percentage) {
@@ -212,121 +189,5 @@ class Account {
     let transfers = result.filter((tx) => tx[1].op[0] === "transfer");
     transfers = transfers.slice(-10).reverse();
     return transfers;
-  }
-
-  async getPowerDown() {
-    const totalSteem = (await this.props.getProp("total_vesting_fund_steem"))
-      ? Number(
-          (await this.props.getProp("total_vesting_fund_steem")).split(" ")[0]
-        )
-      : Number(
-          (await this.props.getProp("total_vesting_fund_hive")).split(" ")[0]
-        );
-    const totalVests = Number(
-      (await this.props.getProp("total_vesting_shares")).split(" ")[0]
-    );
-    const withdrawn = (
-      (((await this.getAccountInfo("withdrawn")) / totalVests) * totalSteem) /
-      1000000
-    ).toFixed(0);
-    const total_withdrawing = (
-      (((await this.getAccountInfo("to_withdraw")) / totalVests) * totalSteem) /
-      1000000
-    ).toFixed(0);
-    const next_vesting_withdrawal = await this.getAccountInfo(
-      "next_vesting_withdrawal"
-    );
-    return [withdrawn, total_withdrawing, next_vesting_withdrawal];
-  }
-
-  async powerDown(hp, callback) {
-    const totalSteem = (await this.props.getProp("total_vesting_fund_steem"))
-      ? Number(
-          (await this.props.getProp("total_vesting_fund_steem")).split(" ")[0]
-        )
-      : Number(
-          (await this.props.getProp("total_vesting_fund_hive")).split(" ")[0]
-        );
-    const totalVests = Number(
-      (await this.props.getProp("total_vesting_shares")).split(" ")[0]
-    );
-    let vestingShares = (parseFloat(hp) * totalVests) / totalSteem;
-    vestingShares = vestingShares.toFixed(6);
-    vestingShares = vestingShares.toString() + " VESTS";
-
-    hive.broadcast.withdrawVesting(
-      this.getKey("active"),
-      this.getName(),
-      vestingShares,
-      callback
-    );
-  }
-
-  powerUp(amount, to, callback) {
-    hive.broadcast.transferToVesting(
-      this.getKey("active"),
-      this.getName(),
-      to,
-      amount,
-      callback
-    );
-  }
-
-  async getDelegatees() {
-    const that = this;
-    let delegatees = await this.delegatees;
-    delegatees = delegatees.filter(function (elt) {
-      return elt.vesting_shares != 0;
-    });
-    if (delegatees.length > 0)
-      delegatees = await Promise.all(
-        delegatees.map(async (elt) => {
-          elt.hp = parseFloat(
-            await this.toHP(
-              parseFloat(elt.vesting_shares.replace(" VESTS", ""))
-            )
-          ).toFixed(3);
-          return elt;
-        })
-      );
-    return delegatees;
-  }
-  async getDelegators() {
-    const that = this;
-    let delegators = await this.delegators;
-    delegators = delegators.filter(function (elt) {
-      return elt.vesting_shares != 0;
-    });
-    if (delegators.length > 0)
-      delegators = await Promise.all(
-        delegators.map(async (elt) => {
-          const hp = await that.toHP(elt.vesting_shares + " VESTS");
-          elt.hp = parseFloat(hp).toFixed(3);
-          return elt;
-        })
-      );
-    return delegators;
-  }
-  async delegateHP(amount, to, callback) {
-    const totalSteem = (await this.props.getProp("total_vesting_fund_steem"))
-      ? Number(
-          (await this.props.getProp("total_vesting_fund_steem")).split(" ")[0]
-        )
-      : Number(
-          (await this.props.getProp("total_vesting_fund_hive")).split(" ")[0]
-        );
-    const totalVests = Number(
-      (await this.props.getProp("total_vesting_shares")).split(" ")[0]
-    );
-    let delegated_vest = (parseFloat(amount) * totalVests) / totalSteem;
-    delegated_vest = delegated_vest.toFixed(6);
-    delegated_vest = delegated_vest.toString() + " VESTS";
-    hive.broadcast.delegateVestingShares(
-      activeAccount.getKey("active"),
-      activeAccount.getName(),
-      to,
-      delegated_vest,
-      callback
-    );
   }
 }

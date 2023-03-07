@@ -180,11 +180,6 @@ chrome.runtime.onMessage.addListener(function (
       updateProposalVote: chrome.i18n.getMessage("dialog_title_vote_proposal"),
       signTx: chrome.i18n.getMessage("dialog_title_sign_tx"),
       addAccount: chrome.i18n.getMessage("popup_html_add_account"),
-      convert: collaterized
-        ? chrome.i18n.getMessage("dialog_title_convert_dtc"),
-      recurrentTransfer: chrome.i18n.getMessage(
-        "dialog_title_recurrent_transfer"
-      ),
     };
     const header = titles[type];
     $("#dialog_header").text(header + (testnet ? " (TESTNET)" : ""));
